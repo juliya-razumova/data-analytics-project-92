@@ -1,4 +1,4 @@
-select count(*) as customers_count from customers
+select count(*) as customers_count from customers;
 
 
 with tab_income as(
@@ -20,7 +20,7 @@ left join tab_income
 on employees.employee_id = tab_income.sales_person_id
 group by name
 order by income desc nulls last
-limit 10
+limit 10;
 
 
 with tab_income as(
@@ -42,7 +42,7 @@ left join tab_income
 on employees.employee_id = tab_income.sales_person_id
 group by name
 having coalesce(round(avg(tab_income.sale_income)), 0) < (select avg(sale_income) from tab_income)
-order by average_income nulls first
+order by average_income nulls first;
 
 
 with tab_income as(
@@ -66,4 +66,4 @@ weekday,
 sum(income) as income
 from tab_income
 group by name, num_day, weekday
-order by substring(name from 1 for 1), num_day, name
+order by substring(name from 1 for 1), num_day, name;
