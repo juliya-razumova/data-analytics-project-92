@@ -67,3 +67,11 @@ sum(income) as income
 from tab_income
 group by name, num_day, weekday
 order by substring(name from 1 for 1), num_day, name;
+
+
+select '16-25' as age_category, count(*) as count from customers where age between 16 and 25
+union
+select '26-40' as age_category, count(*) as count from customers where age between 26 and 40
+union
+select '40+' as age_category, count(*) as count from customers where age > 40
+order by age_category;
