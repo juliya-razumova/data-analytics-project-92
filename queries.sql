@@ -75,3 +75,22 @@ select '26-40' as age_category, count(*) as count from customers where age betwe
 union
 select '40+' as age_category, count(*) as count from customers where age > 40
 order by age_category;
+
+
+with tab as (
+select
+to_char(sale_date, 'YYYY-MM') as date,
+customer_id as customer,
+sum(price*quantity) as income
+from sales s
+left join products p 
+using(product_id)
+group by customer_id, to_char(sale_date, 'YYYY-MM')
+order by to_char(sale_date, 'YYYY-MM'), customer_id
+)
+select distinct 
+date,
+count(customer) over(partition by date) as total_customers,
+sum(income) over(partition by date) as income
+from tab
+order by date;
