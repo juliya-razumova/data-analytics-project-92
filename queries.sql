@@ -1,6 +1,12 @@
+customers_count.cvs
+  
 select count(*) as customers_count from customers;
 
 
+
+
+top_10_total_income.csv
+  
 with tab_income as(
 select 
 sales_id,
@@ -23,6 +29,10 @@ order by income desc nulls last
 limit 10;
 
 
+
+
+lowest_average_income.csv
+  
 with tab_income as(
 select 
 sales_id,
@@ -45,6 +55,10 @@ having coalesce(round(avg(tab_income.sale_income)), 0) < (select avg(sale_income
 order by average_income nulls first;
 
 
+
+
+day_of_the_week_income.csv
+  
 with tab_income as(
 select 
 sales_id,
@@ -69,14 +83,36 @@ group by name, num_day, weekday
 order by substring(name from 1 for 1), num_day, name;
 
 
-select '16-25' as age_category, count(*) as count from customers where age between 16 and 25
-union
-select '26-40' as age_category, count(*) as count from customers where age between 26 and 40
-union
-select '40+' as age_category, count(*) as count from customers where age > 40
+
+
+age_groups.cvs
+  
+with tab as (
+select distinct 
+s.customer_id,
+age
+from sales s 
+left join customers c 
+using (customer_id)
+)
+select
+case 
+	when age between 16 and 25 then '16-25'
+	when age between 26 and 40 then '26-40'
+	when age > 40 then '40+'
+	else 'младше 16'
+end
+as age_category,
+count(customer_id)
+from tab
+group by age_category
 order by age_category;
 
 
+
+
+customers_by_month.csv
+  
 with tab as (
 select
 to_char(sale_date, 'YYYY-MM') as date,
@@ -96,6 +132,10 @@ from tab
 order by date;
 
 
+
+
+special_offer.csv
+  
 with tab as (
 select distinct
 concat(c.first_name, ' ', c.last_name) as customer,
