@@ -99,23 +99,17 @@ order by age_category;
 
 customers_by_month.csv
   
-with tab as (
-select
-to_char(sale_date, 'YYYY-MM') as date,
-customer_id as customer,
+select 
+to_char (sale_date, 'YYYY-MM') as date,
+count(distinct customer_id) as total_customers,
 sum(price*quantity) as income
-from sales s
-left join products p 
-using(product_id)
-group by customer_id, to_char(sale_date, 'YYYY-MM')
-order by to_char(sale_date, 'YYYY-MM'), customer_id
-)
-select distinct 
-date,
-count(customer) over(partition by date) as total_customers,
-sum(income) over(partition by date) as income
-from tab
-order by date;
+from sales
+left join customers
+using (customer_id)
+left join products
+using (product_id)
+group by to_char (sale_date, 'YYYY-MM')
+order by to_char (sale_date, 'YYYY-MM');
 
 
 
