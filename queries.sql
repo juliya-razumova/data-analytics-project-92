@@ -48,28 +48,25 @@ order by avg_income;
 
 day_of_the_week_income.csv
   
-with tab_income as(
+with tab as (
 select 
-sales_id,
-sales_person_id,
-round(price*quantity) as income,
-concat(employees.first_name, ' ', employees.last_name) as name,
-extract('isodow' from sale_date) as num_day,
-to_char(sale_date, 'day') as weekday
+concat(first_name, ' ', last_name) as name,
+to_char(sale_date, 'day') as weekday,
+extract (isodow from sale_date) as day_num,
+price*quantity as income
 from sales
-left join products
-on sales.product_id = products.product_id
 left join employees
-on employees.employee_id = sales.sales_person_id
-order by num_day
+on employee_id = sales_person_id
+left join products
+using (product_id)
 )
 select 
 name,
 weekday,
-sum(income) as income
-from tab_income
-group by name, num_day, weekday
-order by substring(name from 1 for 1), num_day, name;
+round(sum(income), 0) as income
+from tab
+group by name, weekday, day_num
+order by day_num, name;
 
 
 
