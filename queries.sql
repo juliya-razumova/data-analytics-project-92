@@ -33,26 +33,23 @@ limit 10;
 
 lowest_average_income.csv
   
-with tab_income as(
+with tab as (
 select 
-sales_id,
-sales_person_id,
-quantity,
-price,
-quantity*price as sale_income
+concat (first_name, ' ', last_name) as name,
+avg(price*quantity) as avg_income
 from sales
+left join employees
+on employee_id = sales_person_id
 left join products
-on sales.product_id = products.product_id
+using (product_id)
+group by concat (first_name, ' ', last_name)
 )
-select
-concat(employees.first_name, ' ', employees.last_name) as name,
-coalesce(round(avg(tab_income.sale_income)), 0) as average_income
-from employees
-left join tab_income
-on employees.employee_id = tab_income.sales_person_id
-group by name
-having coalesce(round(avg(tab_income.sale_income)), 0) < (select avg(sale_income) from tab_income)
-order by average_income nulls first;
+select 
+name,
+round(avg_income) as average_income
+from tab
+where avg_income < (select avg(avg_income) from tab)
+order by avg_income;
 
 
 
