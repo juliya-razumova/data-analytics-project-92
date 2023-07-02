@@ -122,25 +122,16 @@ order by date;
 
 special_offer.csv
   
-with tab as (
-select distinct
-concat(c.first_name, ' ', c.last_name) as customer,
-customer_id,
-price,
-first_value(sale_date) over(partition by customer_id order by sale_date) as sale_date,
-first_value(concat(e.first_name, ' ', e.last_name)) over(partition by customer_id order by sale_date) as seller
-from sales s
-left join products p 
-using(product_id)
-left join employees e
-on s.sales_person_id = e.employee_id
-left join customers c
-using(customer_id)
-where price = 0
-)
-select
-customer,
+select distinct on (concat (c.first_name, ' ', c.last_name))
+concat (c.first_name, ' ', c.last_name) as customer,
 sale_date,
-seller
-from tab
-order by customer_id, sale_date;
+concat (e.first_name, ' ', e.last_name) as sales
+from sales s 
+left join employees e 
+on employee_id = sales_person_id
+left join customers c 
+using (customer_id)
+left join products 
+using (product_id)
+where price = 0
+order by concat (c.first_name, ' ', c.last_name), sale_date, customer_id;
