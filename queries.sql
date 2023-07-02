@@ -7,25 +7,17 @@ select count(*) as customers_count from customers;
 
 top_10_total_income.csv
   
-with tab_income as(
 select 
-sales_id,
-sales_person_id,
-quantity,
-price
+concat (first_name, ' ', last_name) as name,
+count(sales_id) as operations,
+round(sum(price*quantity), 0) as income
 from sales
+left join employees
+on employee_id = sales_person_id
 left join products
-on sales.product_id = products.product_id
-)
-select
-concat(employees.first_name, ' ', employees.last_name) as name,
-count(tab_income.sales_person_id) as operations,
-round(sum(tab_income.quantity*tab_income.price)) as income
-from employees
-left join tab_income
-on employees.employee_id = tab_income.sales_person_id
-group by name
-order by income desc nulls last
+using (product_id)
+group by concat (first_name, ' ', last_name)
+order by income desc
 limit 10;
 
 
