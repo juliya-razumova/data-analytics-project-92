@@ -1,6 +1,6 @@
 customers_count.cvs
   
-select count(*) as customers_count from customers;
+select count(distinct customer_id) from sales;
 
 
 
