@@ -73,14 +73,6 @@ order by day_num, name;
 
 age_groups.cvs
   
-with tab as (
-select distinct 
-s.customer_id,
-age
-from sales s 
-left join customers c 
-using (customer_id)
-)
 select
 case 
 	when age between 16 and 25 then '16-25'
@@ -89,8 +81,8 @@ case
 	else 'младше 16'
 end
 as age_category,
-count(customer_id)
-from tab
+count(distinct customer_id)
+from customers
 group by age_category
 order by age_category;
 
