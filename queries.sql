@@ -10,7 +10,7 @@ top_10_total_income.csv
 select 
 concat (first_name, ' ', last_name) as name,
 count(sales_id) as operations,
-round(sum(price*quantity), 0) as income
+round(sum(price*quantity), 4) as income
 from sales
 left join employees
 on employee_id = sales_person_id
